@@ -34,9 +34,23 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-&%rxla(x!_ey$x_1_r4zg
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.railway.app')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',')]
+
+
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'team-task-manager-production-7287.up.railway.app',
+    '.railway.app',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://team-task-manager-production-7287.up.railway.app',
+    'https://*.railway.app',
+]
 
 
 # Application definition
