@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TeamFlow | Task Manager</title>
+    <link rel="stylesheet" href="{% static 'core/style.css' %}" />
+  </head>
+
+  <body>
+    <div class="layout">
+      {% if user.is_authenticated %}
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">T</div>
+          <div>
+            <h2>TeamFlow</h2>
+            <p>Task Manager</p>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+          <a href="{% url 'project_list' %}">📁 Projects</a>
+          <a href="{% url 'project_create' %}">➕ New Project</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-box">
+            <div class="avatar">{{ user.username|first|upper }}</div>
+            <div>
+              <strong>{{ user.username }}</strong>
+              <span>Logged in</span>
+            </div>
+          </div>
+
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="logout-btn" type="submit">Logout</button>
+          </form>
+        </div>
+      </aside>
+      {% endif %}
+
+      <main
+        class="{% if user.is_authenticated %}main-content{% else %}auth-main{% endif %}"
+      >
+        {% if user.is_authenticated %}
+        <header class="topbar">
+          <div>
+            <h1>Welcome back, {{ user.username }}</h1>
+            <p>Manage your team projects and tasks beautifully.</p>
+          </div>
+        </header>
+        {% endif %} {% if messages %}
+        <div class="message-wrapper">
+          {% for message in messages %}
+          <div class="alert">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %} {% block content %} {% endblock %}
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %} {% block content %}
+
+<section class="hero-card">
+  <div>
+    <span class="tag">Team Productivity</span>
+    <h2>Organize work. Assign tasks. Track progress.</h2>
+    <p>
+      Keep your projects, members, and deadlines under control from one modern
+      dashboard.
+    </p>
+  </div>
+
+  <a href="{% url 'project_create' %}" class="white-btn">Create Project</a>
+</section>
+
+<section class="stats-grid">
+  <div class="stat-card blue">
+    <div class="stat-icon">📝</div>
+    <h3>Total Tasks</h3>
+    <p>{{ total_tasks }}</p>
+  </div>
+
+  <div class="stat-card yellow">
+    <div class="stat-icon">🚧</div>
+    <h3>In Progress</h3>
+    <p>{{ progress_tasks }}</p>
+  </div>
+
+  <div class="stat-card green">
+    <div class="stat-icon">✅</div>
+    <h3>Completed</h3>
+    <p>{{ completed_tasks }}</p>
+  </div>
+
+  <div class="stat-card red">
+    <div class="stat-icon">⏰</div>
+    <h3>Overdue</h3>
+    <p>{{ overdue_tasks }}</p>
+  </div>
+</section>
+
+<section class="content-card">
+  <div class="section-heading">
+    <div>
+      <h2>Recent Tasks</h2>
+      <p>Your latest project activity</p>
+    </div>
+  </div>
+
+  {% if recent_tasks %}
+  <div class="table-box">
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Project</th>
+          <th>Status</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for task in recent_tasks %}
+        <tr>
+          <td>
+            <strong>{{ task.title }}</strong>
+          </td>
+          <td>{{ task.project.name }}</td>
+          <td>
+            <span class="badge {{ task.status }}">
+              {{ task.get_status_display }}
+            </span>
+          </td>
+          <td>{{ task.due_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-box">
+    <h3>No tasks yet</h3>
+    <p>Create a project and start adding tasks.</p>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}

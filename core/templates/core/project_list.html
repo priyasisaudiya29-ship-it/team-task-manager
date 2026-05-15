@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %} {% block content %}
+
+<div class="page-title">
+  <div>
+    <h2>Projects</h2>
+    <p>View and manage your team projects</p>
+  </div>
+
+  <a href="{% url 'project_create' %}" class="primary-btn">+ Create Project</a>
+</div>
+
+<div class="project-grid">
+  {% for project in projects %}
+  <div class="project-card">
+    <div class="project-top">
+      <div class="project-icon">📁</div>
+      <span class="badge {{ project.status }}"
+        >{{ project.get_status_display }}</span
+      >
+    </div>
+
+    <h3>{{ project.name }}</h3>
+    <p>{{ project.description|truncatewords:22 }}</p>
+
+    <div class="project-info">
+      <span>Admin</span>
+      <strong>{{ project.owner.username }}</strong>
+    </div>
+
+    <div class="project-actions">
+      <a href="{% url 'project_detail' project.id %}" class="primary-btn small"
+        >View Project</a
+      >
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-box">
+    <h3>No projects found</h3>
+    <p>Create your first project to start managing tasks.</p>
+    <a href="{% url 'project_create' %}" class="primary-btn">Create Project</a>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
