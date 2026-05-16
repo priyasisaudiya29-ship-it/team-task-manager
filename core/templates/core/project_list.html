@@ -6,7 +6,9 @@
     <p>View and manage your team projects</p>
   </div>
 
+  {% if user.profile.role == 'admin' %}
   <a href="{% url 'project_create' %}" class="primary-btn">+ Create Project</a>
+  {% endif %}
 </div>
 
 <div class="project-grid">
@@ -37,7 +39,9 @@
   <div class="empty-box">
     <h3>No projects found</h3>
     <p>Create your first project to start managing tasks.</p>
+    {% if user.profile.role == 'admin' %}
     <a href="{% url 'project_create' %}" class="primary-btn">Create Project</a>
+    {% endif %}
   </div>
   {% endfor %}
 </div>

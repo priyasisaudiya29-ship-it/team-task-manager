@@ -10,7 +10,9 @@
     </p>
   </div>
 
+  {% if user.profile.role == 'admin' %}
   <a href="{% url 'project_create' %}" class="white-btn">Create Project</a>
+  {% endif %}
 </section>
 
 <section class="stats-grid">

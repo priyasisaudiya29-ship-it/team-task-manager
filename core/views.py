@@ -51,7 +51,10 @@ def dashboard(request):
         Q(owner=request.user) | Q(members=request.user)
     ).distinct()
 
-    tasks = Task.objects.filter(project__in=projects)
+    if request.user.profile.role == 'admin':
+        tasks = Task.objects.filter(project__in=projects)
+    else:
+        tasks = Task.objects.filter(project__in=projects, assigned_to=request.user)
 
     total_tasks = tasks.count()
     completed_tasks = tasks.filter(status='completed').count()
@@ -85,6 +88,10 @@ def project_list(request):
 
 @login_required
 def project_create(request):
+    if request.user.profile.role != 'admin':
+        messages.error(request, "Only admin can create projects.")
+        return redirect('project_list')
+
     if request.method == 'POST':
         form = ProjectForm(request.POST)
 
@@ -105,8 +112,8 @@ def project_create(request):
 def project_update(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    if project.owner != request.user:
-        messages.error(request, "Only project admin can update this project.")
+    if project.owner != request.user and request.user.profile.role != 'admin':
+        messages.error(request, "Only admin can update projects.")
         return redirect('project_detail', pk=pk)
 
     if request.method == 'POST':
@@ -130,7 +137,10 @@ def project_detail(request, pk):
         messages.error(request, "You do not have access to this project.")
         return redirect('project_list')
 
-    tasks = project.tasks.all().order_by('-created_at')
+    if request.user.profile.role == 'admin':
+        tasks = project.tasks.all().order_by('-created_at')
+    else:
+        tasks = project.tasks.filter(assigned_to=request.user).order_by('-created_at')
 
     return render(request, 'core/project_detail.html', {
         'project': project,
@@ -142,7 +152,7 @@ def project_detail(request, pk):
 def task_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
-    if project.owner != request.user:
+    if project.owner != request.user and request.user.profile.role != 'admin':
         messages.error(request, "Only project admin can create tasks.")
         return redirect('project_detail', pk=project.id)
 
@@ -176,12 +186,12 @@ def task_update(request, pk):
         messages.error(request, "You do not have access to this task.")
         return redirect('project_list')
 
-    is_admin = project.owner == request.user
-    is_assigned_member = task.assigned_to == request.user
-
-    if not is_admin and not is_assigned_member:
-        messages.error(request, "You can update only your assigned tasks.")
+    if request.user.profile.role != 'admin':
+        messages.error(request, "Only admin can edit tasks.")
         return redirect('project_detail', pk=project.id)
+
+    is_admin = True # Since we checked the role above
+    is_assigned_member = task.assigned_to == request.user
 
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task, project=project)
