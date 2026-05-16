@@ -1,11 +1,12 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Project, Task
+from .models import Project, Task, Profile
 
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    role = forms.ChoiceField(choices=[('admin', 'Admin'), ('member', 'Member')], required=True)
 
     class Meta:
         model = User
@@ -15,6 +16,29 @@ class SignupForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.help_text = ''
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if commit:
+            user.save()
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.role = self.cleaned_data.get('role')
+            profile.save()
+        return user
+
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['role']
 
 
 class ProjectForm(forms.ModelForm):

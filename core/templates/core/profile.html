@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="form-header">
+        <span class="tag">Settings</span>
+        <h2>Your Profile</h2>
+        <p>Update your account details and role.</p>
+    </div>
+
+    <form method="POST" class="modern-form">
+        {% csrf_token %}
+        
+        <div class="content-card">
+            <h3>Account Information</h3>
+            <p class="muted">Your login details</p>
+            {{ u_form.as_p }}
+        </div>
+
+        <div class="content-card">
+            <h3>Role & Permissions</h3>
+            <p class="muted">Your current role in the workspace</p>
+            {{ p_form.as_p }}
+        </div>
+
+        <button type="submit" class="primary-btn full">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.utils import timezone
 
-from .models import Project, Task
-from .forms import SignupForm, ProjectForm, TaskForm
+from .models import Project, Task, Profile
+from .forms import SignupForm, ProjectForm, TaskForm, UserUpdateForm, ProfileUpdateForm
 
 
 def signup_view(request):
@@ -22,6 +22,27 @@ def signup_view(request):
         form = SignupForm()
 
     return render(request, 'core/signup.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form
+    }
+    return render(request, 'core/profile.html', context)
 
 
 @login_required
