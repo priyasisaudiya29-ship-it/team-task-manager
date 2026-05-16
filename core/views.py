@@ -6,7 +6,7 @@ from django.db.models import Q, Count
 from django.utils import timezone
 
 from .models import Project, Task, Profile
-from .forms import SignupForm, ProjectForm, TaskForm, UserUpdateForm, ProfileUpdateForm
+from .forms import SignupForm, ProjectForm, TaskForm, UserUpdateForm
 
 
 def signup_view(request):
