@@ -5,6 +5,7 @@
     <div class="form-wrapper" style="margin-bottom: 30px;">
         <div class="form-header">
             <span class="tag">Account</span>
+            <span class="badge {{ user.profile.role }}" style="float: right;">{{ user.profile.get_role_display }}</span>
             <h2>Settings</h2>
             <p>Update your personal information.</p>
         </div>
