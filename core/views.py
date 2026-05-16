@@ -112,7 +112,7 @@ def project_create(request):
 def project_update(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
-    if project.owner != request.user and request.user.profile.role != 'admin':
+    if request.user.profile.role != 'admin':
         messages.error(request, "Only admin can update projects.")
         return redirect('project_detail', pk=pk)
 
@@ -152,8 +152,8 @@ def project_detail(request, pk):
 def task_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
-    if project.owner != request.user and request.user.profile.role != 'admin':
-        messages.error(request, "Only project admin can create tasks.")
+    if request.user.profile.role != 'admin':
+        messages.error(request, "Only admin can create tasks.")
         return redirect('project_detail', pk=project.id)
 
     if request.method == 'POST':

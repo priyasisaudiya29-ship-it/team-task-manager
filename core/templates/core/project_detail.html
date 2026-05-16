@@ -12,14 +12,12 @@
     </div>
   </div>
 
-  {% if project.owner == user %}
+  {% if user.profile.role == 'admin' %}
   <div class="hero-actions">
     <a href="{% url 'project_update' project.id %}" class="white-btn"
       >Edit Project</a
     >
-    {% if user.profile.role == 'admin' %}
     <a href="{% url 'task_create' project.id %}" class="dark-btn">Add Task</a>
-    {% endif %}
   </div>
   {% endif %}
 </section>
