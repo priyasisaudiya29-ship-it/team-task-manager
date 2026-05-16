@@ -17,6 +17,9 @@
     <a href="{% url 'project_update' project.id %}" class="white-btn"
       >Edit Project</a
     >
+    <a href="{% url 'project_delete' project.id %}" class="white-btn" style="color: #ef4444;"
+      >Delete</a
+    >
     <a href="{% url 'task_create' project.id %}" class="dark-btn">Add Task</a>
   </div>
   {% endif %}

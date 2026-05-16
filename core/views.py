@@ -130,6 +130,22 @@ def project_update(request, pk):
 
 
 @login_required
+def project_delete(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.user.profile.role != 'admin':
+        messages.error(request, "Only admin can delete projects.")
+        return redirect('project_detail', pk=pk)
+
+    if request.method == 'POST':
+        project.delete()
+        messages.success(request, "Project deleted successfully.")
+        return redirect('project_list')
+
+    return render(request, 'core/project_confirm_delete.html', {'project': project})
+
+
+@login_required
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
 
