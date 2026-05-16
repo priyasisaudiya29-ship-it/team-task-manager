@@ -59,6 +59,15 @@ def profile_view(request):
 
 
 @login_required
+def promote_me(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    profile.role = 'admin'
+    profile.save()
+    messages.success(request, f"Congratulations {request.user.username}, you are now an Admin!")
+    return redirect('profile')
+
+
+@login_required
 def dashboard(request):
     projects = Project.objects.filter(
         Q(owner=request.user) | Q(members=request.user)

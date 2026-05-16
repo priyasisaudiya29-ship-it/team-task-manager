@@ -11,6 +11,7 @@ router.register('tasks', TaskViewSet, basename='api-tasks')
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
+    path('promote-me/', views.promote_me, name='promote_me'),
 
     path('signup/', views.signup_view, name='signup'),
     path('profile/', views.profile_view, name='profile'),
