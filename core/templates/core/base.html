@@ -3,6 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TeamFlow | Task Manager</title>
     <link rel="stylesheet" href="{% static 'core/style.css' %}" />
   </head>
@@ -10,7 +11,8 @@
   <body>
     <div class="layout">
       {% if user.is_authenticated %}
-      <aside class="sidebar">
+      <button class="mobile-toggle" id="mobileToggle">☰</button>
+      <aside class="sidebar" id="sidebar">
         <div class="brand">
           <div class="brand-icon">T</div>
           <div>
@@ -61,5 +63,24 @@
         {% endif %} {% block content %} {% endblock %}
       </main>
     </div>
+    <script>
+      const mobileToggle = document.getElementById('mobileToggle');
+      const sidebar = document.getElementById('sidebar');
+      
+      if (mobileToggle && sidebar) {
+        mobileToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+          if (window.innerWidth <= 800 && 
+              !sidebar.contains(e.target) && 
+              e.target !== mobileToggle) {
+            sidebar.classList.remove('active');
+          }
+        });
+      }
+    </script>
   </body>
 </html>
