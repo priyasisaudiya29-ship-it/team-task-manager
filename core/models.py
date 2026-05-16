@@ -84,11 +84,11 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.get_or_create(user=instance)
+    Profile.objects.get_or_create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    if not hasattr(instance, 'profile'):
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
+    else:
         Profile.objects.create(user=instance)
-    instance.profile.save()

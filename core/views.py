@@ -63,7 +63,9 @@ def dashboard(request):
         Q(owner=request.user) | Q(members=request.user)
     ).distinct()
 
-    if request.user.profile.role == 'admin':
+    is_admin = hasattr(request.user, 'profile') and request.user.profile.role == 'admin'
+
+    if is_admin:
         tasks = Task.objects.filter(project__in=projects)
     else:
         tasks = Task.objects.filter(project__in=projects, assigned_to=request.user)
@@ -165,7 +167,9 @@ def project_detail(request, pk):
         messages.error(request, "You do not have access to this project.")
         return redirect('project_list')
 
-    if request.user.profile.role == 'admin':
+    is_admin = hasattr(request.user, 'profile') and request.user.profile.role == 'admin'
+
+    if is_admin:
         tasks = project.tasks.all().order_by('-created_at')
     else:
         tasks = project.tasks.filter(assigned_to=request.user).order_by('-created_at')
