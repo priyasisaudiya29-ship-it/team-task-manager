@@ -18,7 +18,9 @@ except ImportError:
     def config(key, default=None, cast=None):
         """Fallback config function if decouple not installed"""
         val = os.getenv(key, default)
-        if cast and val:
+        if cast is bool and isinstance(val, str):
+            return val.lower() in ('true', '1', 't', 'y', 'yes')
+        if cast and val is not None:
             return cast(val)
         return val
 
