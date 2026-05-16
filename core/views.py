@@ -251,3 +251,23 @@ def task_update(request, pk):
         'title': 'Update Task',
         'project': project
     })
+
+
+@login_required
+def task_delete(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    project = task.project
+
+    if request.user.profile.role != 'admin':
+        messages.error(request, "Only admin can delete tasks.")
+        return redirect('project_detail', pk=project.id)
+
+    if request.method == 'POST':
+        task.delete()
+        messages.success(request, "Task deleted successfully.")
+        return redirect('project_detail', pk=project.id)
+
+    return render(request, 'core/task_confirm_delete.html', {
+        'task': task,
+        'project': project
+    })

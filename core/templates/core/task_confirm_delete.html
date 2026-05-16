@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="form-header">
+        <span class="tag" style="background: #fee2e2; color: #991b1b;">Danger Zone</span>
+        <h2>Delete Task?</h2>
+        <p>Are you sure you want to delete the task: <strong>{{ task.title }}</strong>?</p>
+        <p class="muted">Project: {{ project.name }}</p>
+    </div>
+
+    <form method="POST" class="modern-form">
+        {% csrf_token %}
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <a href="{% url 'project_detail' project.id %}" class="dark-btn" style="flex: 1; text-align: center;">Cancel</a>
+            <button type="submit" class="primary-btn" style="flex: 1; background: #ef4444; box-shadow: 0 12px 24px rgba(239, 68, 68, 0.22);">Yes, Delete Task</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

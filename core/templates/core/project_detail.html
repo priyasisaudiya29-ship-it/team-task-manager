@@ -100,6 +100,9 @@
             <a href="{% url 'task_update' task.id %}" class="primary-btn tiny"
               >Update</a
             >
+            <a href="{% url 'task_delete' task.id %}" class="white-btn tiny" style="color: #ef4444;"
+              >Delete</a
+            >
             {% else %}
             <span class="muted">View Only</span>
             {% endif %}
