@@ -28,19 +28,31 @@ def signup_view(request):
 def profile_view(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
+        if u_form.is_valid():
             u_form.save()
-            p_form.save()
-            messages.success(request, "Profile updated successfully.")
+            messages.success(request, "Account updated successfully.")
             return redirect('profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+    # Get user's projects
+    projects = Project.objects.filter(
+        Q(owner=request.user) | Q(members=request.user)
+    ).distinct()
+
+    # Get team members (unique users from all projects user is part of)
+    team_members = User.objects.filter(
+        Q(member_projects__in=projects) | Q(owned_projects__in=projects)
+    ).exclude(id=request.user.id).distinct()
+
+    # Get assigned tasks
+    assigned_tasks = Task.objects.filter(assigned_to=request.user).order_by('-due_date')
 
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'projects': projects,
+        'team_members': team_members,
+        'assigned_tasks': assigned_tasks
     }
     return render(request, 'core/profile.html', context)
 

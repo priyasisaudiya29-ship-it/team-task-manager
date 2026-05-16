@@ -35,12 +35,6 @@ class UserUpdateForm(forms.ModelForm):
         fields = ['username', 'email']
 
 
-class ProfileUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['role']
-
-
 class ProjectForm(forms.ModelForm):
     members = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),

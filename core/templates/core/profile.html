@@ -1,29 +1,115 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="form-wrapper">
-    <div class="form-header">
-        <span class="tag">Settings</span>
-        <h2>Your Profile</h2>
-        <p>Update your account details and role.</p>
+<div class="profile-layout">
+    <div class="form-wrapper" style="margin-bottom: 30px;">
+        <div class="form-header">
+            <span class="tag">Account</span>
+            <h2>Settings</h2>
+            <p>Update your personal information.</p>
+        </div>
+
+        <form method="POST" class="modern-form">
+            {% csrf_token %}
+            <div class="content-card">
+                <h3>Login Credentials</h3>
+                <p class="muted">Your email and username</p>
+                <div style="margin-top: 15px;">
+                    {{ u_form.as_p }}
+                </div>
+            </div>
+            <button type="submit" class="primary-btn full">Save Changes</button>
+        </form>
     </div>
 
-    <form method="POST" class="modern-form">
-        {% csrf_token %}
-        
-        <div class="content-card">
-            <h3>Account Information</h3>
-            <p class="muted">Your login details</p>
-            {{ u_form.as_p }}
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-icon">📁</div>
+            <h3>Your Projects</h3>
+            <p>{{ projects.count }}</p>
         </div>
-
-        <div class="content-card">
-            <h3>Role & Permissions</h3>
-            <p class="muted">Your current role in the workspace</p>
-            {{ p_form.as_p }}
+        <div class="stat-card green">
+            <div class="stat-icon">👥</div>
+            <h3>Team Members</h3>
+            <p>{{ team_members.count }}</p>
         </div>
+        <div class="stat-card yellow">
+            <div class="stat-icon">📋</div>
+            <h3>Tasks Assigned</h3>
+            <p>{{ assigned_tasks.count }}</p>
+        </div>
+    </div>
 
-        <button type="submit" class="primary-btn full">Save Changes</button>
-    </form>
+    <div class="content-card">
+        <div class="section-heading">
+            <h2>Active Projects</h2>
+            <p>Projects you are currently working on</p>
+        </div>
+        <div class="member-list">
+            {% for project in projects %}
+            <a href="{% url 'project_detail' project.id %}" class="member-pill {% if project.owner == user %}admin-pill{% endif %}">
+                {{ project.name }}
+            </a>
+            {% empty %}
+            <p class="muted">No projects joined yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="content-card">
+        <div class="section-heading">
+            <h2>My Assigned Tasks</h2>
+            <p>Upcoming deadlines and to-dos</p>
+        </div>
+        {% if assigned_tasks %}
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in assigned_tasks %}
+                    <tr>
+                        <td><strong>{{ task.title }}</strong></td>
+                        <td>{{ task.project.name }}</td>
+                        <td><span class="badge {{ task.status }}">{{ task.get_status_display }}</span></td>
+                        <td><span class="priority {{ task.priority }}">{{ task.get_priority_display }}</span></td>
+                        <td>{{ task.due_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="muted">No tasks assigned to you yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="content-card">
+        <div class="section-heading">
+            <h2>Your Team</h2>
+            <p>Collaborators from your projects</p>
+        </div>
+        <div class="member-list">
+            {% for member in team_members %}
+            <div class="member-pill">
+                {{ member.username }} <span>{{ member.email }}</span>
+            </div>
+            {% empty %}
+            <p class="muted">No team members found.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
+<style>
+    .profile-layout .content-card { margin-top: 25px; }
+    .profile-layout .stat-card { margin-bottom: 0; }
+</style>
 {% endblock %}
