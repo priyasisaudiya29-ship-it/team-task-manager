@@ -37,6 +37,7 @@ class TaskForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if project:
+            self.instance.project = project
             users = User.objects.filter(
                 id__in=list(project.members.values_list('id', flat=True)) + [project.owner.id]
             )

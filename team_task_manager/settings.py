@@ -22,6 +22,12 @@ except ImportError:
             return cast(val)
         return val
 
+try:
+    import whitenoise  # noqa: F401
+    WHITENOISE_AVAILABLE = True
+except ImportError:
+    WHITENOISE_AVAILABLE = False
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,15 +40,14 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-&%rxla(x!_ey$x_1_r4zg
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.railway.app')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',')]
 
-
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS += [
     '127.0.0.1',
     'localhost',
+    'testserver',
     'team-task-manager-production-7287.up.railway.app',
     '.railway.app',
 ]
@@ -69,7 +74,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+]
+
+if WHITENOISE_AVAILABLE:
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+
+MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -161,7 +171,10 @@ REST_FRAMEWORK = {
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if WHITENOISE_AVAILABLE:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Media Files
 MEDIA_URL = 'media/'
